@@ -10,7 +10,7 @@ hook_dir="$(dirname "$0")"
 hook_symlink="$(readlink "$0")"
 
 # Manage arguments passed to script
-while getopts ":a" o; do 
+while getopts ":a" o; do
     case "${o}" in
         a)
             CHECK_ALL=true;;
@@ -73,6 +73,12 @@ for changedfile in $files_to_check; do
     else
         changedfile_native="$changedfile"
     fi
+
+
+    if [[ "$AUTO_FIX_WHITESPACE" != "disabled" ]] ; then
+        ${subhook_root}/auto_fix_whitespace.sh "$changedfile" $AUTO_FIX_LFEOF
+    fi
+
     #check puppet manifest syntax
     if type puppet >/dev/null 2>&1; then
         if echo "$changedfile" | grep -iq '\.epp$'; then
